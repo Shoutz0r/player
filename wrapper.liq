@@ -10,7 +10,7 @@ set("server.socket.permissions",    wrapperServerSocketPermissions)
 #
 # In case there is no output
 #
-unfallibleSource = single("./resources/fallback.mp4")
+unfallibleSource = single("home/liquidsoap/app/resources/fallback.mp4")
 
 #
 # the shoutzor.liq file will connect to this
@@ -18,34 +18,23 @@ unfallibleSource = single("./resources/fallback.mp4")
 # it will automatically be able to fix itself without interrupting any stream connections
 #
 
-liveVideo = input.harbor(
+live = input.harbor(
     wrapperInputListeningMount,
     port = wrapperInputListeningPort,
     password = wrapperInputListeningPassword)
 
-liveVideo = fallback(track_sensitive=false, [liveVideo, unfallibleSource])
-liveAudio = drop_video(liveVideo)
-
-#
-# audio output
-#
-output.icecast(
-  audioEncodingFormat,
-  mount = wrapperAudioOutputMount,
-  id = "audioWrapper",
-  host = wrapperAudioOutputHost,
-  port = wrapperAudioOutputPort,
-  password = wrapperAudioOutputPassword,
-  liveAudio)
+live = fallback(
+        track_sensitive=false, 
+        [live, unfallibleSource])
 
 #
 # video output
 #
 output.icecast(
-  videoEncodingFormat,
-  mount = wrapperVideoOutputMount,
-  id = "videoWrapper",
-  host = wrapperVideoOutputHost,
-  port = wrapperVideoOutputPort,
-  password = wrapperVideoOutputPassword,
-  liveVideo)
+    mount = wrapperOutputMount,
+    id = "videoWrapper",
+    host = wrapperOutputHost,
+    port = wrapperOutputPort,
+    password = wrapperOutputPassword,
+    output_format,
+    live)

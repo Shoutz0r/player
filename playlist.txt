@@ -1,0 +1,7 @@
+shoutzor:/home/liquidsoap/app/test.mp4
+shoutzor:/home/liquidsoap/app/test.mp3
+shoutzor:/home/liquidsoap/app/test.mp4
+shoutzor:/home/liquidsoap/app/test.mp3
+shoutzor:/home/liquidsoap/app/test.mp4
+shoutzor:/home/liquidsoap/app/test.mp3
+shoutzor:/home/liquidsoap/app/test.mp4

@@ -18,36 +18,24 @@ shoutzorServerSocketPermissions = %socketPermissions%
 wrapperInputListeningMount = "%wrapperInputListeningMount%"
 wrapperInputListeningPort = %wrapperInputListeningPort%
 wrapperInputListeningPassword = "%wrapperInputListeningPassword%"
-wrapperAudioOutputHost = "%wrapperAudioOutputHost%"
-wrapperAudioOutputMount = "%wrapperAudioOutputMount%"
-wrapperAudioOutputPort = %wrapperAudioOutputPort%
-wrapperAudioOutputPassword = "%wrapperAudioOutputPassword%"
-wrapperVideoOutputHost = "%wrapperVideoOutputHost%"
-wrapperVideoOutputMount = "%wrapperVideoOutputMount%"
-wrapperVideoOutputPort = %wrapperVideoOutputPort%
-wrapperVideoOutputPassword = "%wrapperVideoOutputPassword%"
+wrapperOutputHost = "%wrapperVideoOutputHost%"
+wrapperOutputMount = "%wrapperVideoOutputMount%"
+wrapperOutputPort = %wrapperVideoOutputPort%
+wrapperOutputPassword = "%wrapperVideoOutputPassword%"
 shoutzorUrl = "%shoutzorUrl%"
 
-#
-# encoding format
-# bitrate: encoded data fixed bitrate
-# internal_quality: Lame algorithms internal quality. A value between 0 and 9, 0 being highest quality and 9 the worst.
-#
-audioEncodingFormat = %mp3(
-                    bitrate=%encodingBitrate%,
-                    internal_quality=%encodingQuality%)
-
-#
-# Video speed-preset: https://gstreamer.freedesktop.org/documentation/x264/index.html?gi-language=c#GstX264EncPreset
-#
-videoEncodingFormat = %gstreamer(channels=2,
-			           audio="lamemp3enc",
-			           has_video=true,
-			           video="x264enc speed-preset=6",
-			           muxer="mpegtsmux",
-			           metadata="metadata",
-			           log=5,
-			           pipeline="")
+# The output encoding format
+output_format = %ffmpeg(
+    format="webm", 
+    %audio(
+        codec="aac",
+        b="128k",
+    ),
+    %video(
+        codec="libx264",
+        b="5M"
+    )
+)
 
 #
 # use ignore because of warnings
