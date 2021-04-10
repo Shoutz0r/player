@@ -1,13 +1,12 @@
-# "Crossfade"-ish between tracks
-# using AutoDJ logic to mix tracks when possible
+# Crossover function for track switching
+# will attempt to use AutoDJ logic to smoothen transitions between
+# the tracks by mixing them. Otherwise will fallback to smart crossfade.
 #
-# @param ~start_next   Crossing duration, if any.
-# @param ~fade_in      Fade-in duration, if any.
-# @param ~fade_out     Fade-out duration, if any.
-# @param ~width        Width of the volume analysis window.
-# @param ~conservative Always prepare for
-#                      a premature end-of-track.
-# @param s             The input source.
+# @param ~start_next         When to start the crossover
+# @param ~max_bpm_adjust     Max BPM difference between tracks for
+#                            the smart-mix logic to be enabled.
+#                            Will otherwise use smart crossfade.
+# @param source_input        The input source.
 def autodj_cross (
     ~start_next=8.,
     ~max_bpm_adjust=12
