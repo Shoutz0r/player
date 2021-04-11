@@ -2,7 +2,7 @@
 %include "functions.liq"
 
 #Create our unfallible source
-silent_source = single("/home/liquidsoap/app/resources/fallback_with_audio.mp4")
+silent_source = single("/home/liquidsoap/app/test.mp3")
 
 #Requester input
 playlist_source = playlist("/home/liquidsoap/app/playlist.txt",id="queue_list",reload_mode="seconds",reload=10,timeout=5.)
