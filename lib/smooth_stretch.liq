@@ -3,45 +3,91 @@
 # @param ~ratio    A value higher than 1 means slowing down
 # @param ~duration The duration over which the ratio should be applied
 # @param ~on_done  Function to execute when the fade is finished
-# @param ~active   The active behavior is to keep ticking the child's clock when the
-#                  operator is not streaming. Otherwise the child's clock is strictly
-#                  based on what is streamed off the child source, which results in
-#                  time-dependent active sources to be frozen when that source is
-#                  stopped.
 # @param s         The source
+def mkstretch(
+        ~start_ratio=1.,
+        ~target_ratio=1.,
+        ~duration=3.,
+        ~on_done={()},
+        s) =
+
+    start_time = ref(-1.)
+
+    def stretch_over_time() =
+        if !start_time < 0. then
+            start_time := source.time(s)
+        end
+
+        t = source.time(s) - !start_time
+        if t > duration then
+            on_done ()
+            target_ratio
+        else
+            if start_ratio <= target_ratio then
+                start_ratio + (target_ratio / duration) * (target_ratio - start_ratio)
+            else
+                target_ratio + (1. - target_ratio / duration) * (start_ratio - target_ratio)
+            end
+        end
+    end
+
+    stretch_over_time
+end
+
+# Fade the end of tracks.
+# @category Source / Sound Processing
+# @param ~id                Force the value of the source ID.
+# @param ~start_ratio       Start value of the stretch ratio
+# @param ~target_ratio      Target value of the stretch ratio
+# @param ~duration          Duration of the stretching
+# @param ~track_sensitive   Be track sensitive (if `false` stretch only once at the beginning of the track).
 def smooth_stretch(
-    ~ratio=1.,
-    ~duration=3.,
-    ~on_done={()},
-    ~active=true,
-    s) =
+        ~id="smooth_stretch",
+        ~start_ratio=1.,
+        ~target_ratio=1.,
+        ~duration=3.,
+        ~track_sensitive=true,
+        s) =
 
-  start_time = ref(-1.)
-  current_ratio = ref(1.)
+    log = log(label=source.id(s),level=4)
+    fn = ref(fun () -> 1.)
+    duration = ref(duration)
+    start_time = ref(-1.)
+    started = ref(false)
 
-  def stretch_over_time() =
-    if !start_time < 0. then
-      start_time := source.time(s)
+    def start_stretch(d,_) =
+        log("Start stretching with #{d}s remaining.")
+        start_time := source.time(s)
+        duration = if d < !duration then d else !duration end
+
+        fn := mkstretch(
+                start_ratio=start_ratio,
+                target_ratio=target_ratio,
+                duration=duration,
+                s)
+
+        started := true
     end
 
-    t = source.time(s) - !start_time
-    if t > duration then
-      on_done ()
-      stop
+    def apply() =
+        fn = !fn
+        fn()
+    end
+
+    def stop_stretch(_) =
+        if !started then
+            fn := fun () -> 1.
+            started := false
+        end
+    end
+
+    if track_sensitive then
+        source.on_track(s, stop_stretch)
     else
-      if start <= stop then
-        current_ratio := start + (ratio/duration) * (stop-start)
-      else
-        current_ratio := stop + (1.-ratio/duration) * (start-stop)
-      end
-
-      # Apply the new stretch value
-      stretch(
-        active=active, 
-        ratio=current_ratio,
-        s)
+        start_stretch(!duration, [])
     end
-  end
 
-  stretch_over_time
+    stretch(
+        ratio=apply,
+        s)
 end

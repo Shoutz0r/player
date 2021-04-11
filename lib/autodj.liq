@@ -8,19 +8,19 @@
 #                            Will otherwise use smart crossfade.
 # @param source_input        The input source.
 def autodj_cross (
-    ~start_next=8.,
-    ~max_bpm_adjust=12
-    source_input)
+        ~start_next=8.,
+        ~max_bpm_adjust=12,
+        source_input)
 
     log = log(label="autodj_cross")
 
     def autodj_transition(
-        volume_a,
-        volume_b,
-        meta_source_a,
-        meta_source_b,
-        source_a,
-        source_b)
+            volume_a,
+            volume_b,
+            meta_source_a,
+            meta_source_b,
+            source_a,
+            source_b)
 
         # Get duration of the next track
         duration_b = float_of_string(process.read("get-duration-in-seconds #{source_b}"))
@@ -35,7 +35,7 @@ def autodj_cross (
         # > 1 means the next track is slower
         # < 1 means the next track is faster
         bpm_diff_ratio = bpm_b / bpm_a
-        bpm_diff = abs(bpm_b - bpm_a)
+        bpm_diff = int_of_float(abs(bpm_b - bpm_a))
 
         #
         # Transition logic
@@ -56,13 +56,18 @@ def autodj_cross (
             log("BPM difference is within range. Using smart-mix logic")
 
             # Change the speed of the current playing song to match the next track
-            stretch(
-                active=true, 
-                ratio=bpm_diff_ratio,
-                source_a)
+            smooth_stretch( 
+                target_ratio=bpm_diff_ratio,
+                duration=3.,
+                source_input)
         end #/if
     end #/def
 
     # Trigger our code when {start_next} seconds of the current track is remaining
-    cross(width=start_next, duration=start_next, conservative=false, autodj_transition, source_input)
+    cross(
+        width=start_next,
+        duration=start_next,
+        conservative=false,
+        autodj_transition,
+        source_input)
 end #/def
