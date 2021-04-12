@@ -1,12 +1,4 @@
-/home/liquidsoap/app/one.mp3
-/home/liquidsoap/app/two.mp3
-/home/liquidsoap/app/three.mp3
-/home/liquidsoap/app/four.mp3
-/home/liquidsoap/app/one.mp3
-/home/liquidsoap/app/two.mp3
-/home/liquidsoap/app/three.mp3
-/home/liquidsoap/app/four.mp3
-/home/liquidsoap/app/one.mp3
-/home/liquidsoap/app/two.mp3
-/home/liquidsoap/app/three.mp3
-/home/liquidsoap/app/four.mp3
+/home/liquidsoap/app/tracks/100bpm.mp3
+/home/liquidsoap/app/tracks/110bpm.mp3
+/home/liquidsoap/app/tracks/120bpm.mp3
+/home/liquidsoap/app/tracks/130bpm.mp3

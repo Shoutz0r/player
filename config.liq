@@ -11,6 +11,15 @@ output_format = %ffmpeg(
     )
 )
 
+# The output encoding format
+output_format = %ffmpeg(
+    format="mp3", 
+    %audio(
+        codec="aac",
+        b="128k",
+    )
+)
+
 #
 # use ignore because of warnings
 #

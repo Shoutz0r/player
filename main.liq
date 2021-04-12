@@ -5,14 +5,20 @@
 silent_source = single("/home/liquidsoap/app/test.mp3")
 
 #Requester input
-playlist_source = playlist("/home/liquidsoap/app/playlist.txt",id="queue_list",reload_mode="seconds",reload=10,timeout=5.)
+playlist_source = playlist(
+						"/home/liquidsoap/app/playlist.txt",
+						id="queue_list",
+						mode="randomize",
+						reload_mode="seconds",
+						reload=0,
+						timeout=5.,
+						loop=true)
 
-#video_source = drop_audio(playlist_source)
+# Apply AutoDJ mixing
+playlist_source = autodj_mix(playlist_source)
 
 # Add the fallback silent unfallible-source and smart crossfade
 live = add([playlist_source, silent_source])
-
-#live = ffmpeg.encode.audio_video(output_format, live)
 
 #stream output
 output.srt(

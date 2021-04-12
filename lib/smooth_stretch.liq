@@ -34,8 +34,8 @@ def mkstretch(
     stretch_over_time
 end
 
-# Fade the end of tracks.
-# @category Source / Sound Processing
+# Smoothly stretch a track (based on fade.out)
+#
 # @param ~id                Force the value of the source ID.
 # @param ~start_ratio       Start value of the stretch ratio
 # @param ~target_ratio      Target value of the stretch ratio
@@ -46,7 +46,6 @@ def smooth_stretch(
         ~start_ratio=1.,
         ~target_ratio=1.,
         ~duration=3.,
-        ~track_sensitive=true,
         s) =
 
     log = log(label=source.id(s),level=4)
@@ -81,13 +80,10 @@ def smooth_stretch(
         end
     end
 
-    if track_sensitive then
-        source.on_track(s, stop_stretch)
-    else
-        start_stretch(!duration, [])
-    end
+    source.on_track(s, stop_stretch)
 
     stretch(
+        id=id,
         ratio=apply,
         s)
 end

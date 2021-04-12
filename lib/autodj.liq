@@ -7,35 +7,51 @@
 #                            the smart-mix logic to be enabled.
 #                            Will otherwise use smart crossfade.
 # @param source_input        The input source.
-def autodj_cross (
+def autodj_mix (
         ~start_next=8.,
-        ~max_bpm_adjust=12,
-        source_input)
+        ~max_bpm_adjust=12.,
+        source_input) =
 
     log = log(label="autodj_cross")
-
+ 
     def autodj_transition(
             volume_a,
             volume_b,
             meta_source_a,
             meta_source_b,
             source_a,
-            source_b)
+            source_b) =
 
         # Get duration of the next track
-        duration_b = float_of_string(process.read("get-duration-in-seconds #{source_b}"))
+        #duration_b = float_of_string(process.read("get-duration-in-seconds #{source_b}"))
+
+        def set_bpm(~bpm,~target)
+            target=bpm
+        end
+
+        log("Getting BPM from track #{string_of(source_a)} and #{string_of(source_b)}")
 
         # Get the BPM from both sources
-        bpm_a = float_of_string(process.read("get-bpm #{source_a}"))
-        bpm_b = float_of_string(process.read("get-bpm #{source_b}"))
+        #bpm_a = int_of_string(process.read("exiftool -s -s -s -BeatsPerMinute #{source_a}"))
+        #bpm_b = int_of_string(process.read("exiftool -s -s -s -BeatsPerMinute #{source_b}"))
+        #bpm_b = int_of_string(meta_source_a["TBPM"])
+        #bpm_a = int_of_string(meta_source_b["TBPM"])
+
+        bpm_a = ref(0.)
+        bpm_b = ref(0.)
+        source_a = bpm(every=30., (fun(bpm) -> bpm_a := bpm), source_a)
+        source_b = bpm(every=30., (fun(bpm) -> bpm_b := bpm), source_b)
+
+        log("BPM track A: #{string_of(!bpm_a)}")
+        log("BPM track B: #{string_of(!bpm_b)}")
 
         # Calculate the BPM difference ratio
         # Where: 
         # 1 is same speed.
         # > 1 means the next track is slower
         # < 1 means the next track is faster
-        bpm_diff_ratio = bpm_b / bpm_a
-        bpm_diff = int_of_float(abs(bpm_b - bpm_a))
+        bpm_diff_ratio = !bpm_b / !bpm_a
+        bpm_diff = abs(!bpm_b - !bpm_a)
 
         #
         # Transition logic
