@@ -32,15 +32,16 @@ def autodj_mix (
         log("Getting BPM from track #{string_of(source_a)} and #{string_of(source_b)}")
 
         # Get the BPM from both sources
-        #bpm_a = int_of_string(process.read("exiftool -s -s -s -BeatsPerMinute #{source_a}"))
-        #bpm_b = int_of_string(process.read("exiftool -s -s -s -BeatsPerMinute #{source_b}"))
-        #bpm_b = int_of_string(meta_source_a["TBPM"])
-        #bpm_a = int_of_string(meta_source_b["TBPM"])
-
         bpm_a = ref(0.)
         bpm_b = ref(0.)
-        source_a = bpm(every=30., (fun(bpm) -> bpm_a := bpm), source_a)
-        source_b = bpm(every=30., (fun(bpm) -> bpm_b := bpm), source_b)
+        #bpm_a = float_of_string(process.read("exiftool -s -s -s -BeatsPerMinute #{source_a}"))
+        #bpm_b = float_of_string(process.read("exiftool -s -s -s -BeatsPerMinute #{source_b}"))
+        #bpm_b = float_of_string(meta_source_a["TBPM"])
+        #bpm_a = float_of_string(meta_source_b["TBPM"])
+        # TODO: BPM can't be calculated instantly, since it needs to be fed with data first.
+        # Instead, try to get one of the above ideas working to get the BPM from the metadata
+        source_a = bpm(every=10., (fun(bpm) -> bpm_a := bpm), source_a)
+        source_b = bpm(every=10., (fun(bpm) -> bpm_b := bpm), source_b)
 
         log("BPM track A: #{string_of(!bpm_a)}")
         log("BPM track B: #{string_of(!bpm_b)}")
