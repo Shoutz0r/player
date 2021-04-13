@@ -54,8 +54,8 @@ def smooth_stretch(
     start_time = ref(-1.)
     started = ref(false)
 
-    def start_stretch(d,_) =
-        log("Start stretching with #{d}s remaining.")
+    def start_stretch(d, _) =
+        log("Start stretching")
         start_time := source.time(s)
         duration = if d < !duration then d else !duration end
 
@@ -75,11 +75,14 @@ def smooth_stretch(
 
     def stop_stretch(_) =
         if !started then
+            log("Stopping stretching")
+
             fn := fun () -> 1.
             started := false
         end
     end
 
+    start_stretch(!duration, [])
     source.on_track(s, stop_stretch)
 
     stretch(
