@@ -13,7 +13,7 @@ def autodj_mix (
         source_input) =
 
     log = log(label="autodj_cross")
- 
+
     def autodj_transition(
             volume_a,
             volume_b,
@@ -25,23 +25,20 @@ def autodj_mix (
         # Get duration of the next track
         #duration_b = float_of_string(process.read("get-duration-in-seconds #{source_b}"))
 
-        def set_bpm(~bpm,~target)
-            target=bpm
-        end
-
         log("Getting BPM from track #{string_of(source_a)} and #{string_of(source_b)}")
 
         # Get the BPM from both sources
         bpm_a = ref(0.)
         bpm_b = ref(0.)
+
         #bpm_a = float_of_string(process.read("exiftool -s -s -s -BeatsPerMinute #{source_a}"))
         #bpm_b = float_of_string(process.read("exiftool -s -s -s -BeatsPerMinute #{source_b}"))
         #bpm_b = float_of_string(meta_source_a["TBPM"])
         #bpm_a = float_of_string(meta_source_b["TBPM"])
         # TODO: BPM can't be calculated instantly, since it needs to be fed with data first.
         # Instead, try to get one of the above ideas working to get the BPM from the metadata
-        source_a = bpm(every=10., (fun(bpm) -> bpm_a := bpm), source_a)
-        source_b = bpm(every=10., (fun(bpm) -> bpm_b := bpm), source_b)
+        bpm_a := 120.
+        bpm_b := 110.
 
         log("BPM track A: #{string_of(!bpm_a)}")
         log("BPM track B: #{string_of(!bpm_b)}")
@@ -73,10 +70,15 @@ def autodj_mix (
             log("BPM difference is within range. Using smart-mix logic")
 
             # Change the speed of the current playing song to match the next track
-            smooth_stretch( 
-                target_ratio=bpm_diff_ratio,
-                duration=3.,
-                source_input)
+            add(
+                normalize=false,
+                [
+                    smooth_stretch( 
+                        target_ratio=bpm_diff_ratio,
+                        duration=5.,
+                        source_a),
+                    source_b
+                ])
         end #/if
     end #/def
 

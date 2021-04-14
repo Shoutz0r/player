@@ -12,6 +12,7 @@ output_format = %ffmpeg(
 )
 
 # The output encoding format
+# Debugging override.
 output_format = %ffmpeg(
     format="mp3", 
     %audio(
