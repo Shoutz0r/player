@@ -15,7 +15,7 @@ playlist_source = playlist(
 						loop=true)
 
 # Apply AutoDJ mixing
-playlist_source = autodj_mix(start_next=15.,playlist_source)
+playlist_source = autodj_mix(start_next=8.,playlist_source)
 
 # Add the fallback silent unfallible-source and smart crossfade
 live = fallback(track_sensitive=false, [playlist_source, silent_source])

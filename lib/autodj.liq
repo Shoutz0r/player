@@ -14,6 +14,7 @@ def autodj_mix (
 
     log = log(label="autodj_cross")
 
+
     def autodj_transition(
             volume_a,
             volume_b,
@@ -22,34 +23,27 @@ def autodj_mix (
             source_a,
             source_b) =
 
-        # Get duration of the next track
-        #duration_b = float_of_string(process.read("get-duration-in-seconds #{source_b}"))
+        # Debugging
+        list.iter(fun(item) -> log("META A: #{string_of(item)}"), meta_source_a)
+        list.iter(fun(item) -> log("META B: #{string_of(item)}"), meta_source_b)
 
-        log("Getting BPM from track #{string_of(source_a)} and #{string_of(source_b)}")
+        bpm_a = 0.
+        bpm_b = 0.
 
         # Get the BPM from both sources
-        bpm_a = ref(0.)
-        bpm_b = ref(0.)
+        bpm_b = float_of_string(meta_source_a["tempo"])
+        bpm_a = float_of_string(meta_source_b["tempo"])
 
-        #bpm_a = float_of_string(process.read("exiftool -s -s -s -BeatsPerMinute #{source_a}"))
-        #bpm_b = float_of_string(process.read("exiftool -s -s -s -BeatsPerMinute #{source_b}"))
-        #bpm_b = float_of_string(meta_source_a["TBPM"])
-        #bpm_a = float_of_string(meta_source_b["TBPM"])
-        # TODO: BPM can't be calculated instantly, since it needs to be fed with data first.
-        # Instead, try to get one of the above ideas working to get the BPM from the metadata
-        bpm_a := 120.
-        bpm_b := 110.
-
-        log("BPM track A: #{string_of(!bpm_a)}")
-        log("BPM track B: #{string_of(!bpm_b)}")
+        log("BPM track A: #{string_of(bpm_a)}")
+        log("BPM track B: #{string_of(bpm_b)}")
 
         # Calculate the BPM difference ratio
         # Where: 
         # 1 is same speed.
         # > 1 means the next track is slower
         # < 1 means the next track is faster
-        bpm_diff_ratio = !bpm_b / !bpm_a
-        bpm_diff = abs(!bpm_b - !bpm_a)
+        bpm_diff_ratio = bpm_b / bpm_a
+        bpm_diff = abs(bpm_b - bpm_a)
 
         #
         # Transition logic
