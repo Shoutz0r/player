@@ -14,7 +14,6 @@ def autodj_mix (
 
     log = log(label="autodj_cross")
 
-
     def autodj_transition(
             volume_a,
             volume_b,
@@ -54,28 +53,33 @@ def autodj_mix (
         if 
             bpm_diff > max_bpm_adjust or
             bpm_a == 0. or
-            bpm_B == 0.
+            bpm_b == 0.
         then
             log("BPM difference is too large, or failed to detect BPM. Using regular crossfade.")
 
-            crossfade(
-                duration=start_next,
-                fade_in=5.,
-                fade_out=3.,
-                smart=true,
-                width=3.,
-                source_input)
+            add([fade.out(source_a),fade.in(source_b)])
+
+            #crossfade(
+            #    duration=start_next,
+            #    fade_in=5.,
+            #    fade_out=3.,
+            #    smart=true,
+            #    width=3.,
+            #    source_input)
         else
             log("BPM difference is within range. Using smart-mix logic")
 
             # Change the speed of the current playing song to match the next track
+            source_a = smooth_stretch(
+                target_ratio=bpm_diff_ratio,
+                duration=5.,
+                source_a)
+            
+            # Return our processed source output 
             add(
                 normalize=false,
                 [
-                    smooth_stretch( 
-                        target_ratio=bpm_diff_ratio,
-                        duration=5.,
-                        source_a),
+                    source_a,
                     source_b
                 ])
         end #/if

@@ -86,6 +86,6 @@ def smooth_stretch(
     
     stretch(
         id=id,
-        ratio=apply(),
+        ratio=apply,
         s)
 end
