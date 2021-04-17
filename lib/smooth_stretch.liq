@@ -54,6 +54,8 @@ def smooth_stretch(
     duration = ref(duration)
     started = ref(false)
 
+    log("target ratio: #{target_ratio}")
+
     def start_stretch()
         current_ratio = !fn
 
@@ -76,7 +78,14 @@ def smooth_stretch(
 
     def apply() =
         fn = !fn
-        fn()
+
+        #debug
+        val = fn()
+        log("Apply called, result: #{val}")
+        val
+        #/debug
+
+        #fn()
     end
 
     log("calling start_stretch")
