@@ -49,9 +49,14 @@ def autodj_mix (
         # Transition logic
         #
 
-        #If BPM difference is too large, we cannot transition with a smart mix
-        if bpm_diff > max_bpm_adjust then
-            log("BPM difference is too large, using regular crossfade")
+        # If the BPM difference is too large, or if the BPM was unable to be detected
+        # we cannot transition with a smart mix.
+        if 
+            bpm_diff > max_bpm_adjust or
+            bpm_a == 0. or
+            bpm_B == 0.
+        then
+            log("BPM difference is too large, or failed to detect BPM. Using regular crossfade.")
 
             crossfade(
                 duration=start_next,
