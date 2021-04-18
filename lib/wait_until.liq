@@ -1,11 +1,15 @@
+def wait_until_callback(s) =
+    s
+end
+
 # Start fadeout after the defined waittime has passed
 #
 # @param ~waittime      Time to wait until the fadeout starts
 # @param ~duration      The duration the fadeout should take
 # @param s              The source to apply it to
-def fadeout_after(
+def wait_until(
         ~waittime=1.,
-        ~duration=3.,
+        ~on_done=wait_until_callback,
         s) =
 
     start_time = ref(-1.)
@@ -18,9 +22,7 @@ def fadeout_after(
 
         t = source.time(s) - !start_time
         if t > waittime then
-            s = fade.out(
-                duration=duration,
-                s)
+            s = on_done(s)
             has_run := true
         end
         

@@ -93,9 +93,9 @@ def autodj_mix (
                 source_b)
 
             # Wait for 2 seconds, then start fadeout
-            source_a = fadeout_after(
+            source_a = wait_until(
                 waittime=2.,
-                duration=3.,
+                on_done=(fun(s)-> fade.out(duration=3., s)),
                 source_a)
             
             # Return our processed source output 
