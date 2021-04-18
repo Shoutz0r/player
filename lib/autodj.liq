@@ -26,6 +26,9 @@ def autodj_mix (
         list.iter(fun(item) -> log("META A: #{string_of(item)}"), meta_source_a)
         list.iter(fun(item) -> log("META B: #{string_of(item)}"), meta_source_b)
 
+        log("Volume track A: #{string_of(volume_a)}")
+        log("Volume track B: #{string_of(volume_b)}")
+
         bpm_a = 0.
         bpm_b = 0.
 
@@ -69,10 +72,30 @@ def autodj_mix (
         else
             log("BPM difference is within range. Using smart-mix logic")
 
+            # 1. Use CUE point to sync up the beats
+            # 2. adjust BPM of current track slowly to match upcoming track
+            # 3. Crossfade
+            # - Start fadein track B: 3 seconds
+            # - after 2 seconds start fadeout track A, 3 seconds.
+
+            # DISABLED : Right now an OCAML issue will occur when "stretch" is used
+            # Progress can be tracked at: https://github.com/savonet/liquidsoap/issues/1572
+            #
             # Change the speed of the current playing song to match the next track
-            source_a = smooth_stretch(
-                target_ratio=bpm_diff_ratio,
-                duration=5.,
+            #source_a = smooth_stretch(
+            #    target_ratio=bpm_diff_ratio,
+            #    duration=5.,
+            #    source_a)
+
+            # Start fade in of track B
+            source_b = fade.in(
+                duration=3.,
+                source_b)
+
+            # Wait for 2 seconds, then start fadeout
+            source_a = fadeout_after(
+                waittime=2.,
+                duration=3.,
                 source_a)
             
             # Return our processed source output 
