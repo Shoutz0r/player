@@ -1,3 +1,8 @@
+# Start fadeout after the defined waittime has passed
+#
+# @param ~waittime      Time to wait until the fadeout starts
+# @param ~duration      The duration the fadeout should take
+# @param s              The source to apply it to
 def fadeout_after(
         ~waittime=1.,
         ~duration=3.,
