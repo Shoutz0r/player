@@ -3,12 +3,12 @@
 # 
 # NOT PRODUCTION READY!
 #
-# @param ~source_metadata    The metadata array from the source
-def has_video(source_metadata) =
+# @param ~s    The source
+def has_video(s) =
 
 	log = log(label="has_video")
 	result = ref("none")
-	kind = source_metadata["kind"]
+	kind = s.metadata["kind"]
 
 	# Remove the starting { and ending } characters
 	kind = string.replace(

@@ -1,0 +1,34 @@
+version: '3.8'
+services:
+  player:
+    image: 'savonet/liquidsoap:v2.0.1'
+    volumes:
+      - ./:/app
+    command: /app/main.liq
+    depends_on:
+      - player_wrapper
+      - audioserver
+    links:
+      - player_wrapper
+
+  player_wrapper:
+    image: 'savonet/liquidsoap:v2.0.1'
+    volumes:
+      - ./:/app
+    command: /app/wrapper.liq
+    depends_on:
+      - audioserver
+    links:
+      - audioserver
+    environment:
+      - ICECAST_RELAY_SERVER
+      - ICECAST_RELAY_PORT
+      - ICECAST_RELAY_MOUNT
+      - ICECAST_RELAY_PASSWORD
+
+  audioserver:
+    image: 'infiniteproject/icecast'
+    volumes:
+      - ./conf/icecast.xml:/etc/icecast.xml
+    ports:
+      - "8000:8000"

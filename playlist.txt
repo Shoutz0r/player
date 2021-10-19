@@ -1,4 +1,4 @@
-/home/liquidsoap/app/tracks/100bpm.mp3
-/home/liquidsoap/app/tracks/110bpm.mp3
-/home/liquidsoap/app/tracks/120bpm.mp3
-/home/liquidsoap/app/tracks/130bpm.mp3
+/app/tracks/100bpm.mp3
+/app/tracks/110bpm.mp3
+/app/tracks/120bpm.mp3
+/app/tracks/130bpm.mp3

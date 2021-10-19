@@ -78,21 +78,11 @@ def smooth_stretch(
 
     def apply() =
         fn = !fn
-
-        #debug
-        val = fn()
-        log("Apply called, result: #{val}")
-        val
-        #/debug
-
-        #fn()
+        fn()
     end
 
-    log("calling start_stretch")
     start_stretch()
-
-    log("applying stretch")
-    
+        
     stretch(
         id=id,
         ratio=apply,

@@ -5,7 +5,7 @@ end
 # Start fadeout after the defined waittime has passed
 #
 # @param ~waittime      Time to wait until the fadeout starts
-# @param ~duration      The duration the fadeout should take
+# @param ~on_done       Apply a function when the waittime has passed
 # @param s              The source to apply it to
 def wait_until(
         ~waittime=1.,
@@ -22,13 +22,14 @@ def wait_until(
 
         t = source.time(s) - !start_time
         if t > waittime then
-            s = on_done(s)
             has_run := true
+            on_done(s)
+        else
+            s
         end
-        
-        s
     end
 
+    # Check if the function has run already
     if !has_run == true then
         s
     else

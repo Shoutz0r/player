@@ -1,40 +1,38 @@
 %include "config.liq"
 
-set("log.file.path",                wrapperLogFilePath)
-set("log.stdout",                   wrapperLogStdout)
-set("server.telnet",                wrapperServerTelnet)
-set("server.socket",                wrapperServerSocket)
-set("server.socket.path",           wrapperServerSocketPath)
-set("server.socket.permissions",    wrapperServerSocketPermissions)
+#set("log.file.path",                wrapperLogFilePath)
+#set("log.stdout",                   wrapperLogStdout)
+#set("server.telnet",                wrapperServerTelnet)
+#set("server.socket",                wrapperServerSocket)
+#set("server.socket.path",           wrapperServerSocketPath)
+#set("server.socket.permissions",    wrapperServerSocketPermissions)
 
 #
 # In case there is no output
 #
-unfallibleSource = single("home/liquidsoap/app/resources/fallback.mp4")
+unfallibleSource = single("/app/resources/fallback.mp4")
 
 #
-# the shoutzor.liq file will connect to this
+# the main.liq file will connect to this
 # because of instability that stream might crash sometimes, this way
 # it will automatically be able to fix itself without interrupting any stream connections
 #
-
 live = input.harbor(
     wrapperInputListeningMount,
     port = wrapperInputListeningPort,
     password = wrapperInputListeningPassword)
 
-live = fallback(
-        track_sensitive=false, 
-        [live, unfallibleSource])
+# Add the fallback video for when the main player disconnects
+live = fallback(track_sensitive=false, [live, unfallibleSource])
 
-#
-# video output
-#
+#stream output
 output.icecast(
-    mount = wrapperOutputMount,
-    id = "videoWrapper",
-    host = wrapperOutputHost,
-    port = wrapperOutputPort,
-    password = wrapperOutputPassword,
     output_format,
-    live)
+    id = "Shoutz0r_wrapper",
+    host = icecast_host,
+    port = icecast_port,
+    mount = icecast_mount,
+    password = icecast_password,
+    icy_metadata = "true",
+    live
+)

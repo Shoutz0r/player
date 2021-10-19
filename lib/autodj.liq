@@ -9,32 +9,23 @@
 # @param source_input        The input source.
 def autodj_mix (
         ~start_next=8.,
-        ~max_bpm_adjust=12.,
+        ~max_bpm_adjust=30.,
         source_input) =
 
-    log = log(label="autodj_cross")
+    log = log(label="autodj_mix")
 
-    def autodj_transition(
-            volume_a,
-            volume_b,
-            meta_source_a,
-            meta_source_b,
-            source_a,
-            source_b) =
+    def autodj_transition(a,b) =
 
         # Debugging
-        list.iter(fun(item) -> log("META A: #{string_of(item)}"), meta_source_a)
-        list.iter(fun(item) -> log("META B: #{string_of(item)}"), meta_source_b)
+        list.iter(fun(item) -> log("META A: #{string_of(item)}"), a.metadata)
+        list.iter(fun(item) -> log("META B: #{string_of(item)}"), b.metadata)
 
-        log("Volume track A: #{string_of(volume_a)}")
-        log("Volume track B: #{string_of(volume_b)}")
-
-        bpm_a = 0.
-        bpm_b = 0.
+        log("Volume track A: #{string_of(a.db_level)}")
+        log("Volume track B: #{string_of(b.db_level)}")
 
         # Get the BPM from both sources
-        bpm_b = float_of_string(meta_source_a["tempo"])
-        bpm_a = float_of_string(meta_source_b["tempo"])
+        bpm_a = float_of_string(a.metadata["tempo"])
+        bpm_b = float_of_string(b.metadata["tempo"])
 
         log("BPM track A: #{string_of(bpm_a)}")
         log("BPM track B: #{string_of(bpm_b)}")
@@ -60,37 +51,26 @@ def autodj_mix (
         then
             log("BPM difference is too large, or failed to detect BPM. Using regular crossfade.")
 
-            add([fade.out(source_a),fade.in(source_b)])
-
-            #crossfade(
-            #    duration=start_next,
-            #    fade_in=5.,
-            #    fade_out=3.,
-            #    smart=true,
-            #    width=3.,
-            #    source_input)
+            add([fade.out(a.source),fade.in(b.source)])
         else
             log("BPM difference is within range. Using smart-mix logic")
 
             # 1. Use CUE point to sync up the beats
             # 2. adjust BPM of current track slowly to match upcoming track
-            # 3. Crossfade
+            # 3. Crossfade (keeping in mind the possible volume difference)
             # - Start fadein track B: 3 seconds
             # - after 2 seconds start fadeout track A, 3 seconds.
 
-            # DISABLED : Right now an OCAML issue will occur when "stretch" is used
-            # Progress can be tracked at: https://github.com/savonet/liquidsoap/issues/1572
-            #
             # Change the speed of the current playing song to match the next track
-            #source_a = smooth_stretch(
-            #    target_ratio=bpm_diff_ratio,
-            #    duration=5.,
-            #    source_a)
+            source_a = smooth_stretch(
+               target_ratio=bpm_diff_ratio,
+               duration=5.,
+               a.source)
 
             # Start fade in of track B
             source_b = fade.in(
                 duration=3.,
-                source_b)
+                b.source)
 
             # Wait for 2 seconds, then start fadeout
             source_a = wait_until(
