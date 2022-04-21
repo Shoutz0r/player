@@ -9,7 +9,7 @@
 # @param source_input        The input source.
 def autodj_mix (
         ~start_next=8.,
-        ~max_bpm_adjust=30.,
+        ~max_bpm_adjust=50.,
         source_input) =
 
     log = log(label="autodj_mix")
@@ -38,60 +38,125 @@ def autodj_mix (
         bpm_diff_ratio = bpm_b / bpm_a
         bpm_diff = abs(bpm_b - bpm_a)
 
+        source_a = a.source
+        source_b = b.source
+
+        ratio = ref(1.)
+
+        # Change the speed of the current playing song to match the next track
+        def stretch_ratio() =
+            ratio = !ratio
+            log("Current stretch: #{string_of(ratio)}")
+            ratio
+        end
+
         #
         # Transition logic
         #
 
         # If the BPM difference is too large, or if the BPM was unable to be detected
-        # we cannot transition with a smart mix.
-        if 
+        # we cannot match the BPM between songs
+        let source_b = if 
             bpm_diff > max_bpm_adjust or
             bpm_a == 0. or
             bpm_b == 0.
         then
-            log("BPM difference is too large, or failed to detect BPM. Using regular crossfade.")
-
-            add([fade.out(a.source),fade.in(b.source)])
+            log("BPM difference is too large, or failed to detect BPM.")
+            (source_b:source)
         else
-            log("BPM difference is within range. Using smart-mix logic")
+            log("BPM difference is within range. Matching BPM")
 
             # 1. Use CUE point to sync up the beats
-            # 2. adjust BPM of current track slowly to match upcoming track
+            # 2. adjust BPM of upcoming track to match upcoming track
             # 3. Crossfade (keeping in mind the possible volume difference)
-            # - Start fadein track B: 3 seconds
-            # - after 2 seconds start fadeout track A, 3 seconds.
+            # 4. After crossfade is complete, restore the tempo slowly back to the original speed
 
-            # Change the speed of the current playing song to match the next track
-            source_a = smooth_stretch(
-               target_ratio=bpm_diff_ratio,
-               duration=5.,
-               a.source)
+            ratio := bpm_diff_ratio
 
-            # Start fade in of track B
-            source_b = fade.in(
-                duration=3.,
-                b.source)
+            # Stretch stops working once cross is finished.. gotta figure out how to deal with that.
+            # Call external function?
 
-            # Wait for 2 seconds, then start fadeout
-            source_a = wait_until(
-                waittime=2.,
-                on_done=(fun(s)-> fade.out(duration=3., s)),
-                source_a)
-            
-            # Return our processed source output 
-            add(
-                normalize=false,
-                [
-                    source_a,
-                    source_b
-                ])
-        end #/if
+            source_b = stretch(
+               ratio=stretch_ratio,
+               source_b)
+
+            start_time = ref(-1.)
+
+            def ratio_changer() =
+                let duration = 4.
+                let start = bpm_diff_ratio
+                let stop = 1.
+
+                if !start_time < 0. then
+                    log("Ratio Changer started")
+                    start_time := source.time(source_b)
+                end
+
+                t = source.time(source_b) - !start_time
+
+                if t > duration + 2.0 then
+                    log("Ratio Changer finished")
+                    -1.
+                else
+                    log("Ratio Changer running")
+
+                    let new_ratio = if t >= duration then
+                      stop
+                    else
+                      if start <= stop then
+                        start + (t/duration) * (stop-start)
+                      else
+                        stop + (1.-t/duration) * (start-stop)
+                      end
+                    end
+
+                    log("New value: #{string_of(new_ratio)}")
+
+                    ratio := new_ratio
+
+                    0.1
+                end
+            end
+
+            # Slowly restore tempo after the crossfade is complete
+            thread.run.recurrent(delay=8., ratio_changer)
+
+            (source_b:source)
+        end
+
+        # Next up, determine what kind of fade to use based on volume differences
+
+        # Volume is similar (within 4dB difference)
+        let (source_a, source_b) = if 
+            abs(a.db_level - b.db_level) <= 4.
+        then
+            log("Volume is similar")
+            log("Transition: crossed, fade-in, fade-out.")
+
+            (fade.out(duration=start_next, source_a), fade.in(duration=start_next, source_b))
+
+        # B is louder than A
+        elsif b.db_level >= a.db_level
+        then
+            log("New source is significantly louder than old one.")
+            log("Transition: crossed, quick-fadeout + fade-in.")
+
+            (fade.out(duration=3., source_a), fade.in(duration=start_next, source_b))
+
+        # A is louder than B
+        else
+            log("Old source is significantly louder than new one.")
+            log("Transition: crossed, fade-out + quick-fadein")
+            (fade.out(duration=start_next, source_a), fade.in(duration=3., source_b))
+        end
+
+        add(normalize=false, [ source_a, source_b ])
     end #/def
 
     # Trigger our code when {start_next} seconds of the current track is remaining
     cross(
         width=start_next,
-        duration=start_next,
+        duration=start_next + 6.,
         conservative=false,
         autodj_transition,
         source_input)

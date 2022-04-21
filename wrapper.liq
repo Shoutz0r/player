@@ -18,9 +18,9 @@ unfallibleSource = single("/app/resources/fallback.mp4")
 # it will automatically be able to fix itself without interrupting any stream connections
 #
 live = input.harbor(
-    wrapperInputListeningMount,
-    port = wrapperInputListeningPort,
-    password = wrapperInputListeningPassword)
+    wrapper_mount,
+    port = wrapper_port,
+    password = wrapper_password)
 
 # Add the fallback video for when the main player disconnects
 live = fallback(track_sensitive=false, [live, unfallibleSource])

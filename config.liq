@@ -1,13 +1,14 @@
 # Output Icecast server config values
-icecast_host = getenv("ICECAST_RELAY_SERVER")
-icecast_port = int_of_string(getenv("ICECAST_RELAY_PORT"))
-icecast_mount = getenv("ICECAST_RELAY_MOUNT")
-icecast_password = getenv("ICECAST_RELAY_PASSWORD")
+icecast_host = getenv("ICECAST_SOURCE_SERVER")
+icecast_port = int_of_string(getenv("ICECAST_SOURCE_PORT"))
+icecast_mount = getenv("ICECAST_SOURCE_MOUNT")
+icecast_password = getenv("ICECAST_SOURCE_PASSWORD")
 
 # Wrapper config values
-wrapperInputListeningMount = "Shoutz0r"
-wrapperInputListeningPort = 1337
-wrapperInputListeningPassword = "Shoutz0r"
+wrapper_host = getenv("SHOUTZOR_PLAYER_WRAPPER_HOST")
+wrapper_mount = getenv("SHOUTZOR_PLAYER_WRAPPER_MOUNT")
+wrapper_port = int_of_string(getenv("SHOUTZOR_PLAYER_WRAPPER_PORT"))
+wrapper_password = getenv("SHOUTZOR_PLAYER_WRAPPER_PASSWORD")
 
 # The output encoding format
 output_format = %ffmpeg(
@@ -29,3 +30,7 @@ ignore(icecast_host)
 ignore(icecast_port)
 ignore(icecast_mount)
 ignore(icecast_password)
+ignore(wrapper_host)
+ignore(wrapper_mount)
+ignore(wrapper_port)
+ignore(wrapper_password)
