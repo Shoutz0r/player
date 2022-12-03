@@ -12,7 +12,7 @@ def autodj_mix (
         ~max_bpm_adjust=50.,
         source_input) =
 
-    log = log(label="autodj_mix")
+    def log(x) = log(label="autodj_mix", x) end
 
     def autodj_transition(a,b) =
 
@@ -41,15 +41,6 @@ def autodj_mix (
         source_a = a.source
         source_b = b.source
 
-        ratio = ref(1.)
-
-        # Change the speed of the current playing song to match the next track
-        def stretch_ratio() =
-            ratio = !ratio
-            log("Current stretch: #{string_of(ratio)}")
-            ratio
-        end
-
         #
         # Transition logic
         #
@@ -71,55 +62,12 @@ def autodj_mix (
             # 3. Crossfade (keeping in mind the possible volume difference)
             # 4. After crossfade is complete, restore the tempo slowly back to the original speed
 
-            ratio := bpm_diff_ratio
-
-            # Stretch stops working once cross is finished.. gotta figure out how to deal with that.
-            # Call external function?
-
-            source_b = stretch(
-               ratio=stretch_ratio,
-               source_b)
-
-            start_time = ref(-1.)
-
-            def ratio_changer() =
-                let duration = 4.
-                let start = bpm_diff_ratio
-                let stop = 1.
-
-                if !start_time < 0. then
-                    log("Ratio Changer started")
-                    start_time := source.time(source_b)
-                end
-
-                t = source.time(source_b) - !start_time
-
-                if t > duration + 2.0 then
-                    log("Ratio Changer finished")
-                    -1.
-                else
-                    log("Ratio Changer running")
-
-                    let new_ratio = if t >= duration then
-                      stop
-                    else
-                      if start <= stop then
-                        start + (t/duration) * (stop-start)
-                      else
-                        stop + (1.-t/duration) * (start-stop)
-                      end
-                    end
-
-                    log("New value: #{string_of(new_ratio)}")
-
-                    ratio := new_ratio
-
-                    0.1
-                end
-            end
-
-            # Slowly restore tempo after the crossfade is complete
-            thread.run.recurrent(delay=8., ratio_changer)
+            source_b = dynamic_stretch(
+                start_ratio=bpm_diff_ratio,
+                target_ratio=1.,
+                start_delay=8.,
+                duration=6.,
+                source_b)
 
             (source_b:source)
         end
@@ -155,7 +103,7 @@ def autodj_mix (
 
     # Trigger our code when {start_next} seconds of the current track is remaining
     cross(
-        width=start_next,
+        width=start_next + 6.,
         duration=start_next + 6.,
         conservative=false,
         autodj_transition,

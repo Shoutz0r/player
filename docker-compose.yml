@@ -1,45 +1,24 @@
 version: '3.8'
 services:
   player:
-    image: 'savonet/liquidsoap:v2.0.3'
+    image: 'savonet/liquidsoap:v2.1.2'
     volumes:
       - ./:/app
     command: /app/main.liq
     depends_on:
-      - player_wrapper
-      - audioserver
-    links:
-      - player_wrapper
-    environment:
-      - SHOUTZOR_PLAYER_WRAPPER_HOST
-      - SHOUTZOR_PLAYER_WRAPPER_MOUNT
-      - SHOUTZOR_PLAYER_WRAPPER_PORT
-      - SHOUTZOR_PLAYER_WRAPPER_PASSWORD
-
-  player_wrapper:
-    image: 'savonet/liquidsoap:v2.0.3'
-    volumes:
-      - ./:/app
-    command: /app/wrapper.liq
-    depends_on:
-      - audioserver
-    links:
       - audioserver
     environment:
-      - SHOUTZOR_PLAYER_WRAPPER_MOUNT
-      - SHOUTZOR_PLAYER_WRAPPER_PORT
-      - SHOUTZOR_PLAYER_WRAPPER_PASSWORD
       - ICECAST_SOURCE_SERVER
       - ICECAST_SOURCE_PORT
       - ICECAST_SOURCE_MOUNT
       - ICECAST_SOURCE_PASSWORD
-
+     
   audioserver:
     image: 'infiniteproject/icecast'
     volumes:
       - ./conf/icecast.xml:/etc/icecast.xml
     ports:
-      - "8000:8000"
+      - "9000:9000"
     environment:
       - ICECAST_SOURCE_PASSWORD
       - ICECAST_ADMIN_PASSWORD

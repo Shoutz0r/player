@@ -44,7 +44,7 @@
 
     <!-- You may have multiple <listen-socket> elements -->
     <listen-socket>
-        <port>8000</port>
+        <port>9000</port>
         <bind-address>0.0.0.0</bind-address>
     </listen-socket>
 

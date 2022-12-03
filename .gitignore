@@ -1,5 +1,6 @@
+.sublime-project
+.env
 run.sh
 test.mp3
 test.mp4
-tracks
-tracks/*
+tracks/

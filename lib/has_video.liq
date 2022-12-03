@@ -11,15 +11,10 @@ def has_video(s) =
 	kind = s.metadata["kind"]
 
 	# Remove the starting { and ending } characters
-	kind = string.replace(
-		pattern="{|}", 
-		(fun(s) -> ""), 
-		kind)
+	kind = r/{|}/g.replace(kind)
 
 	# Get a key/value array from the string
-	kind_list = string.extract(
-		pattern="(?<key>[^=]+)=(?<value>[^,|}]+),?", 
-		kind)
+	kind_list = r/(?<key>[^=]+)=(?<value>[^,|}]+),?/.exec(kind)
 
 	def find_video_info(item)
 		if string_of(fst(item)) == "video" then
