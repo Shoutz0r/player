@@ -1,5 +1,10 @@
 %include "config.liq"
 %include "functions.liq"
+%include "commands.liq"
+
+def metadatahandler(m)
+  #http.get("/api/")
+end
 
 enable_replaygain_metadata()
 
@@ -16,12 +21,15 @@ playlist_source = playlist(
 						timeout=5.,
 						loop=true)
 
+# Listen to track changes
+on_track(onTrackHandler, playlist_source)
+
 playlist_source = replaygain(playlist_source)
 
-playlist_source = playlist_source
-
 # Apply AutoDJ mixing
-playlist_source = autodj_mix(start_next=8., playlist_source)
+playlist_source = autodj_mix(
+  cross_duration=8., 
+  playlist_source)
 
 # Temporary: add video to MP3
 temp_video_source = single("/app/resources/fallback.mp4")

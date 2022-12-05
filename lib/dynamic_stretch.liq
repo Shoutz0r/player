@@ -2,7 +2,7 @@ def dynamic_stretch(
     ~start_ratio=1.,
     ~target_ratio=1.,
     ~duration=1.,
-    ~start_delay=1.,
+    ~start_delay=0.,
     source_input) =
 
     ratio = ref(start_ratio)
@@ -19,7 +19,7 @@ def dynamic_stretch(
         source_input)
 
     source_input = buffer(
-        buffer=duration, 
+        buffer=1., 
         start=true, 
         source_input)
 
