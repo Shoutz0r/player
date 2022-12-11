@@ -12,6 +12,8 @@ services:
       - ICECAST_SOURCE_PORT
       - ICECAST_SOURCE_MOUNT
       - ICECAST_SOURCE_PASSWORD
+    networks:
+      - shoutzor_api
      
   audioserver:
     image: 'infiniteproject/icecast'
@@ -29,3 +31,7 @@ services:
       - ICECAST_HOSTNAME
       - ICECAST_MAX_CLIENTS
       - ICECAST_MAX_SOURCES
+
+networks:
+  shoutzor_api:
+      name: shoutzor_api

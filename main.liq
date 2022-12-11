@@ -1,28 +1,33 @@
+# Contains all config settings, passwords, etc.
 %include "config.liq"
+# Contains custom functions
 %include "functions.liq"
+# Contains any commands
 %include "commands.liq"
-
-def metadatahandler(m)
-  #http.get("/api/")
-end
-
-enable_replaygain_metadata()
+# Contains the handlers used by functions in main.liq (such as: on_start & on_track)
+%include "handlers.liq"
 
 #Create our unfallible source
 safe_source = single("/app/resources/fallback.mp4")
 
 #Requester input
-playlist_source = playlist(
-						"/app/playlist.txt",
-						id="queue_list",
-						mode="randomize",
-						reload_mode="seconds",
-						reload=0,
-						timeout=5.,
-						loop=true)
+playlist_source = request.queue(id="queue")
+
+# Is called whenever liquidsoap is started
+def onStart()
+    onStartHandler(playlist_source)
+end
+
+on_start(onStart)
+enable_replaygain_metadata()
+
+# Is called when the source starts playing a new file
+def onTrack(m)
+  onTrackHandler(playlist_source, m)
+end
 
 # Listen to track changes
-on_track(onTrackHandler, playlist_source)
+playlist_source = playlist_source.on_track(onTrack)
 
 playlist_source = replaygain(playlist_source)
 
