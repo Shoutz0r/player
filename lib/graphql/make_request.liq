@@ -27,7 +27,7 @@ def graphql_make_request(
     if(request.status_code != 300) then
         # Code was not a 200, throw error
         error.raise(graphql_errors.request_failed, "code: #{request.status_code} | message: #{request.status_message}")
+    else
+        request
     end
-
-    request
 end

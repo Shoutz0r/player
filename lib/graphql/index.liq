@@ -29,10 +29,15 @@ def graphql_request(
             query
         )
 
+        print("#{request}")
+
         # Parse & Return the results
-        parse_graphql_result("#{request}")
+        response = parse_graphql_result("#{request}")
+
+        print(response)
+        response
     catch err do
         # Error caught, return as failed
-        (false, error.message(err))
+        (false, [error.message(err)])
     end    
 end

@@ -6,7 +6,7 @@
 #
 %include "../graphql/index.liq"
 
-def fetch_queue(~max=1)
+def fetch_queue(~max=1) =
     def log(x) = log(label="fetch_queue", x) end
 
     graphql_request(
@@ -24,7 +24,7 @@ def fetch_queue(~max=1)
             }
         }",
         variables={
-            limit = 1
+            limit = max
         }
     )
 end

@@ -5,24 +5,25 @@ def parse_graphql_result(result) =
   # Parse the JSON response
   let json.parse response = result
 
-  # Get the errors from the response (if any), otherwise null.
-  errors = list.assoc("errors", response)
-
   # Check if errors is null
-  if null.defined(errors) then
+  if null.defined(response.errors) then
     # If there are errors, return a list of error messages
-    error_messages = []
+    error_messages = ref([])
+
+    def add_error(e)
+      error_messages := list.add(null.get(e.message), !error_messages)
+    end
 
     # Iterate over all errors, and add the message to the list
     list.iter(
-        fun(e) -> list.add(e["message"], error_messages), 
-        null.get(errors)
+        fun(e) -> add_error(e),
+        null.get(response.errors)
     )
 
     # Return the list of errors
-    (false, error_messages)
+    (false, !error_messages)
   else
     # If there are no errors, return the data from the response
-    (true, null.get(response["data"]))
+    (true, null.get(response.data))
   end
 end
