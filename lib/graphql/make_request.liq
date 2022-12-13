@@ -1,7 +1,7 @@
 def graphql_make_request(
+    ~api=api_graphql_url,
     ~variables={},
     ~headers,
-    ~api,
     query
 ) =
     def log(x) = log(label="graphql_make_request", x) end
@@ -24,10 +24,10 @@ def graphql_make_request(
     log("Request finished with result code #{request.status_code} and message #{request.status_message}")
 
     # Check if the response code is a 200 code
-    if(request.status_code != 300) then
+    if(request.status_code != 200) then
         # Code was not a 200, throw error
-        error.raise(graphql_errors.request_failed, "code: #{request.status_code} | message: #{request.status_message}")
-    else
-        request
+        error.raise(graphql_request_failed, "code: #{request.status_code} | message: #{request.status_message}")
     end
+
+    request
 end

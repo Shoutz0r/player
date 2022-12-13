@@ -1,0 +1,35 @@
+# Example usage:
+# Query the GraphQL server for user data
+# success, data = parse_result(<output from make_request>)
+def graphql_parse_result(response_structure={}, response_body) =
+  
+  # Parse the JSON response
+  let json.parse (response : {
+      # ==== This does not work yet, needs fixing ====
+      data: response_structure?,
+      errors: [{
+          message: string
+      }]?
+  }) = response_body
+
+  # Check if errors is null
+  if null.defined(response.errors) then
+    # Iterate over all errors, and add the message to the list
+    list.iter(
+        fun(e) -> print(e),
+        null.get(response.errors)
+    )
+
+    # Return false.
+    # @TODO figure out how we can return the errors without getting the function's return-type error
+    (false, [])
+
+  # If there are no errors, return the data from the response
+  elsif null.defined(response.data) then
+    (true, [null.get(response.data)])
+
+  # Unknown response, return failed
+  else
+    (false, [])
+  end
+end

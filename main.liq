@@ -7,6 +7,9 @@
 # Contains the handlers used by functions in main.liq (such as: on_start & on_track)
 %include "handlers.liq"
 
+# Prevents sudden changes in loudness
+enable_replaygain_metadata()
+
 #Create our unfallible source
 safe_source = single("/app/resources/fallback.mp4")
 
@@ -14,20 +17,10 @@ safe_source = single("/app/resources/fallback.mp4")
 playlist_source = request.queue(id="queue")
 
 # Is called whenever liquidsoap is started
-def onStart()
-    onStartHandler(playlist_source)
-end
-
-on_start(onStart)
-enable_replaygain_metadata()
-
-# Is called when the source starts playing a new file
-def onTrack(m)
-  onTrackHandler(playlist_source, m)
-end
+on_start(fun() -> onStartHandler(playlist_source))
 
 # Listen to track changes
-playlist_source = playlist_source.on_track(onTrack)
+playlist_source = playlist_source.on_track(fun(m) -> onTrackHandler(playlist_source, m))
 
 playlist_source = replaygain(playlist_source)
 
