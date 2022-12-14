@@ -1,6 +1,6 @@
 # This function will tell the server the next track is playing
 def update_nowplaying()
-    def log(x) = log(label="update_nowplaying", x) end
+    def log(~level=3,x) = log(level=level,label="update_nowplaying", x) end
     tries = ref(0)
     maxTries = 5
     sleepBetweenTries = 3.
@@ -8,7 +8,7 @@ def update_nowplaying()
     # Wrap the code in a while-loop to keep retrying on failure
     while !tries < maxTries do
         # Increase the try counter
-        tries := tries + 1
+        tries := !tries + 1
 
         # Attempt updating the nowplaying
         try
@@ -38,8 +38,8 @@ def update_nowplaying()
             if null.defined(response.data) then
                 success = null.get(response.data).success
 
-                if !success then
-                    log.important("Update nowplaying failed")
+                if success != true then
+                    log(level=2,"Update nowplaying failed")
                     error.raise(shoutzor_update_nowplaying_failed, "Failed to update nowplaying")
                 else
                     log("Succesfully updated nowlaying")
@@ -49,29 +49,31 @@ def update_nowplaying()
                     tries := 100
                 end
             else
-                log.important("Update nowplaying failed")
+                log(level=2,"Update nowplaying failed")
 
                 # Check if errors is null
                 if null.defined(response.errors) then
                     # Iterate over all errors, and print them
                     list.iter(
-                        fun(e) -> log.important(e.message),
+                        fun(e) -> log(level=2,e.message),
                         null.get(response.errors)
                     )
                 else
-                    log.important("Got unexpected response, treating as failed")
+                    log(level=2,"Got unexpected response, treating as failed")
                 end
 
                 error.raise(shoutzor_update_nowplaying_failed, "Failed to update nowplaying")
             end
         catch err do
+            ignore(err)
+            
             if !tries < maxTries then
                 # If an error is caught, retry up to 3 times to update the "nowplaying"
-                log.important("caught error, will retry to update nowplaying")
-                log.important("sleeping for #{string_of_float(sleepBetweenTries)} seconds")
+                log(level=2,"caught error, will retry to update nowplaying")
+                log(level=2,"sleeping for #{string_of_float(sleepBetweenTries)} seconds")
                 sleep(sleepBetweenTries)
             else
-                log.critical("Retries exhausted. Failed to update nowplaying")
+                log(level=1,"Retries exhausted. Failed to update nowplaying")
             end
         end
     end

@@ -44,6 +44,9 @@ def autodj_mix (
 
         
         # Temporarely disabled. Doesn't really work as intended.
+        ignore(bpm_diff)
+        ignore(bpm_diff_ratio)
+        ignore(max_bpm_adjust)
 
 #        # If the BPM difference is too large, or if the BPM was unable to be detected
 #        # we cannot match the BPM between songs

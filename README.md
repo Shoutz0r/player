@@ -1,13 +1,10 @@
 # Shoutz0r-player
-The Shoutz0r media player
+The Shoutz0r media player.\
+This player will communicate with the Shoutz0r backend to fetch & play requests
 
-## Todo
-- Implement AutoDJ logic
-- Use DASH-streaming format
-- Compatibility with the new Shoutz0r
+## Installation
+- Copy `.env.example` to `.env` and edit the variables as needed
+- Run `docker compose up`, this will start the Icecast server & Shoutz0r Player
 
-## Todo in Shoutz0r-app
-- Add bpm-tools & libsox-fmt-all packages to get the BPM of songs
-
-### Credits
+## Credits
 fallback video - <a href="https://pixabay.com/users/EnchantedStudios-722609/">Simon Brough</a>

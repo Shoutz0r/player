@@ -1,5 +1,5 @@
 # Is called whenever liquidsoap is started
-def onStartHandler(source)
+def onStartHandler()
     def log(x) = log(label="onStartHandler", x) end
     log("handler called")
 
@@ -8,7 +8,9 @@ def onStartHandler(source)
 end
 
 # Is called when the source starts playing a new file
-def onTrackHandler(source, m)
+def onTrackHandler(m)
+    ignore(m)
+    
     def log(x) = log(label="onTrackHandler", x) end
     log("handler called")
 

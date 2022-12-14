@@ -4,7 +4,7 @@ def graphql_make_request(
     ~headers=[
         ("Content-Type", "application/json"),
         ("User-Agent", "LiquidSoap Shoutzor Player"),
-        ("Authentication", "Bearer #{api_accesstoken}")
+        ("Authorization", api_accesstoken)
     ],
     query
 ) =

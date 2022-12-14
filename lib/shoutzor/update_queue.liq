@@ -3,10 +3,10 @@
 def update_queue()
     def log(x) = log(label="update_queue", x) end
 
-    if playlist_source.length < 2 then
+    if playlist_source.length() < 2 then
         # We always want at least 2 tracks in the queue.
         # Therefor check how many are currently in the queue (either 0 or 1) and subtract that from 2
-        max = 2 - playlist_source.length
+        max = 2 - playlist_source.length()
 
         try
             # Attempt making the request
