@@ -5,6 +5,9 @@
 # The url where the API can be reached; ie: "http://api:8000/graphql"
 api_graphql_url = getenv("API_GRAPHQL_URL")
 
+# The accesstoken to authenticate ourselves with against the API
+api_accesstoken = getenv("API_ACCESSTOKEN")
+
 # The directory where media files are located. Should NOT end with a '/'
 media_storage_path = getenv("MEDIA_STORAGE_PATH")
 

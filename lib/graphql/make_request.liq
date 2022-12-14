@@ -1,7 +1,11 @@
 def graphql_make_request(
     ~api=api_graphql_url,
     ~variables={},
-    ~headers,
+    ~headers=[
+        ("Content-Type", "application/json"),
+        ("User-Agent", "LiquidSoap Shoutzor Player"),
+        ("Authentication", "Bearer #{api_accesstoken}")
+    ],
     query
 ) =
     def log(x) = log(label="graphql_make_request", x) end

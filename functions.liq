@@ -1,6 +1,4 @@
 %include "lib/graphql/index.liq"
-%include "lib/shoutzor/fetch_queue.liq"
-%include "lib/shoutzor/update_queue.liq"
-%include "lib/shoutzor/update_nowplaying.liq"
+%include "lib/shoutzor/index.liq"
 %include "lib/dynamic_stretch.liq"
 %include "lib/autodj.liq"

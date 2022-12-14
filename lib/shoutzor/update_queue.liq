@@ -15,10 +15,6 @@ def update_queue()
                 variables={
                     limit = max
                 },
-                headers=[
-                    ("Content-Type", "application/json"),
-                    ("User-Agent", "LiquidSoap Shoutzor Player")
-                ],
                 "query update_queue($limit: Int) {
                     requests(
                         page: 1

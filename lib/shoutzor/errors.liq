@@ -1,0 +1,1 @@
+shoutzor_update_nowplaying_failed = error.register("shoutzor_update_nowplaying_failed")
