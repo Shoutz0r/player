@@ -4,6 +4,7 @@ services:
     image: 'savonet/liquidsoap:v2.1.3'
     volumes:
       - ./:/app
+      - ../backend/storage/app/media/:/media
     command: /app/main.liq
     depends_on:
       - audioserver
@@ -18,7 +19,7 @@ services:
   audioserver:
     image: 'infiniteproject/icecast'
     volumes:
-      - ./conf/icecast.xml:/etc/icecast.xml
+      - ./conf/icecast.xml:/etc/icecast.xml:ro
     ports:
       - "9000:9000"
     environment:
@@ -31,6 +32,8 @@ services:
       - ICECAST_HOSTNAME
       - ICECAST_MAX_CLIENTS
       - ICECAST_MAX_SOURCES
+    networks:
+      - shoutzor_api
 
 networks:
   shoutzor_api:
