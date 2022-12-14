@@ -18,10 +18,8 @@ services:
      
   audioserver:
     image: 'infiniteproject/icecast'
-    volumes:
-      - ./conf/icecast.xml:/etc/icecast.xml:ro
     ports:
-      - "9000:9000"
+      - "9000:8000"
     environment:
       - ICECAST_SOURCE_PASSWORD
       - ICECAST_ADMIN_PASSWORD
