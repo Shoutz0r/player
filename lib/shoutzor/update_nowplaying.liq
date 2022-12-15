@@ -26,23 +26,24 @@ def update_nowplaying()
             # Parse the JSON response
             let json.parse (response : {
                 data: {
-                    success: bool,
-                    message: string
+                    updateNowplaying: {
+                        success: bool,
+                        message: string
+                    }
                 }?,
                 errors: [{
                     message: string
                 }]?
             }) = "#{http_request}"
 
-
             if null.defined(response.data) then
-                success = null.get(response.data).success
+                success = null.get(response.data).updateNowplaying.success
 
                 if success != true then
                     log(level=2,"Update nowplaying failed")
                     error.raise(shoutzor_update_nowplaying_failed, "Failed to update nowplaying")
                 else
-                    log("Succesfully updated nowlaying")
+                    log("Succesfully updated nowplaying")
 
                     # Not sure if liquidsoap has a "break" operator
                     # therefor just doing this for now to break out of the while loop

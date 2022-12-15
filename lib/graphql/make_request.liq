@@ -26,9 +26,12 @@ def graphql_make_request(
 
     # Log the HTTP response
     log("Request finished with result code #{request.status_code} and message #{request.status_message}")
+    print("Request finished with result code #{request.status_code} and message #{request.status_message}")
 
     # Check if the response code is a 200 code
     if(request.status_code != 200) then
+        log("Request failed, received non-200 HTTP code")
+        
         # Code was not a 200, throw error
         error.raise(graphql_request_failed, "code: #{request.status_code} | message: #{request.status_message}")
     end

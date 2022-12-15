@@ -1,10 +1,10 @@
 # Is called whenever liquidsoap is started
 def onStartHandler()
     def log(x) = log(label="onStartHandler", x) end
-    log("handler called")
+    log("onStart-handler called")
 
     # First, Update the queue. This should add 2 tracks to the queue (1 to play, 1 in queue)
-    update_queue()
+    thread.run(update_queue)
 end
 
 # Is called when the source starts playing a new file
@@ -12,7 +12,7 @@ def onTrackHandler(m)
     ignore(m)
     
     def log(x) = log(label="onTrackHandler", x) end
-    log("handler called")
+    log("onTrack-handler called")
 
     # Define the commands to run upon changing tracks
     def changeTracks()
@@ -24,6 +24,15 @@ def onTrackHandler(m)
     end
 
     # Run the update from a different thread
-    thread.run(changeTracks)
-    
+    thread.run(changeTracks)    
+end
+
+# Checks if the queue requires updating
+# For example when the queue has less then 2 tracks
+def updateQueueHandler() =
+    if playlist_source.length() < 2 then
+        update_queue()
+    end
+
+    15.
 end

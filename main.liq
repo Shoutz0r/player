@@ -18,7 +18,10 @@ playlist_source = request.queue(id="queue")
 safe_source = single("/app/resources/fallback.mp4")
 
 # Is called whenever liquidsoap is started
-on_start(onStartHandler)
+on_start(fun() -> onStartHandler())
+
+# Check if the queue needs updating every 15 seconds
+thread.run.recurrent(fast=false, delay=15., fun() -> updateQueueHandler())
 
 # Listen to track changes
 playlist_source.on_track(fun(m) -> onTrackHandler(m))

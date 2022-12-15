@@ -13,6 +13,9 @@ services:
       - ICECAST_SOURCE_PORT
       - ICECAST_SOURCE_MOUNT
       - ICECAST_SOURCE_PASSWORD
+      - API_GRAPHQL_URL
+      - API_ACCESSTOKEN
+      - MEDIA_STORAGE_PATH
     networks:
       - shoutzor_api
      
