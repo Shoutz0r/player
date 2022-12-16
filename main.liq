@@ -15,13 +15,10 @@ playlist_source = request.queue(id="queue")
 %include "handlers.liq"
 
 #Create our unfallible source
-safe_source = single("/app/resources/fallback.mp4")
+safe_source = drop_video(single("/app/resources/fallback.mp4"))
 
 # Is called whenever liquidsoap is started
-on_start(fun() -> onStartHandler())
-
-# Check if the queue needs updating every 15 seconds
-thread.run.recurrent(fast=false, delay=15., fun() -> updateQueueHandler())
+onStartHandler()
 
 # Listen to track changes
 playlist_source.on_track(fun(m) -> onTrackHandler(m))
@@ -33,10 +30,6 @@ playlist_source = replaygain(playlist_source)
 playlist_source = autodj_mix(
   cross_duration=8., 
   playlist_source)
-
-# Temporary: add video to MP3
-temp_video_source = single("/app/resources/fallback.mp4")
-playlist_source = mux_video(video=drop_audio(temp_video_source), playlist_source)
 
 # Add the fallback silent unfallible-source and smart crossfade
 live = fallback(track_sensitive=false, [playlist_source, safe_source])
