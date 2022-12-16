@@ -1,7 +1,9 @@
 version: '3.8'
 services:
   player:
-    image: 'savonet/liquidsoap:v2.1.3'
+    build:
+      context: .
+      dockerfile: ./Dockerfile
     volumes:
       - ./:/app
       - ../backend/storage/app/media/:/media
